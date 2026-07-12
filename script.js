@@ -134,25 +134,43 @@
 (function () {
   function closeContactPage() {
     const contactSection = document.querySelector('.contact-section');
+    if (!contactSection) return; // guard against missing DOM node
+
     contactSection.classList.remove('active');
+    // restore scroll
     document.body.style.overflow = 'auto';
   }
 
   // Close button handler
   const closeBtn = document.getElementById('contact-close');
   if (closeBtn) {
-    closeBtn.addEventListener('click', closeContactPage);
+    // ensure the click doesn't bubble to other handlers and always closes
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeContactPage();
+    });
   }
 
   // Close on Escape key
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       const contactSection = document.querySelector('.contact-section');
-      if (contactSection.classList.contains('active')) {
+      if (contactSection && contactSection.classList.contains('active')) {
         closeContactPage();
       }
     }
   });
+
+  // Close when clicking the backdrop (outside the contact-box)
+  const contactSection = document.querySelector('.contact-section');
+  if (contactSection) {
+    contactSection.addEventListener('click', (e) => {
+      // If the click target is the section itself (the backdrop), close
+      if (e.target === contactSection) {
+        closeContactPage();
+      }
+    });
+  }
 
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', function (event) {
@@ -170,7 +188,7 @@
         if (href === '#contact') {
           const contactSection = document.querySelector('.contact-section');
           const isActive = contactSection.classList.contains('active');
-          
+
           if (isActive) {
             // Close contact page
             closeContactPage();
