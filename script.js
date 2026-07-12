@@ -141,12 +141,12 @@
     document.body.style.overflow = 'auto';
   }
 
-  // Close button handler
+  // Close button handler - with stopPropagation to prevent backdrop click
   const closeBtn = document.getElementById('contact-close');
   if (closeBtn) {
-    // ensure the click doesn't bubble to other handlers and always closes
     closeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
+      e.preventDefault();
       closeContactPage();
     });
   }
@@ -165,11 +165,11 @@
   const contactSection = document.querySelector('.contact-section');
   if (contactSection) {
     contactSection.addEventListener('click', (e) => {
-      // If the click target is the section itself (the backdrop), close
+      // Only close if clicking directly on the section (backdrop), not on child elements
       if (e.target === contactSection) {
         closeContactPage();
       }
-    });
+    }, true); // Use capture phase to catch clicks early
   }
 
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
