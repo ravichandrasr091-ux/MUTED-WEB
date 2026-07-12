@@ -132,21 +132,28 @@
 // SMOOTH SCROLL LINK HANDLING WITH CONTACT PAGE
 // ==============================================================
 (function () {
+  let isClosingContact = false;
+
   function closeContactPage() {
     const contactSection = document.querySelector('.contact-section');
-    if (!contactSection) return; // guard against missing DOM node
+    if (!contactSection) return;
 
+    isClosingContact = true;
     contactSection.classList.remove('active');
-    // restore scroll
     document.body.style.overflow = 'auto';
+    
+    // Reset flag after transition completes
+    setTimeout(() => {
+      isClosingContact = false;
+    }, 300);
   }
 
-  // Close button handler - with stopPropagation to prevent backdrop click
+  // Close button handler - direct click only
   const closeBtn = document.getElementById('contact-close');
   if (closeBtn) {
     closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
       e.preventDefault();
+      e.stopPropagation();
       closeContactPage();
     });
   }
@@ -165,11 +172,14 @@
   const contactSection = document.querySelector('.contact-section');
   if (contactSection) {
     contactSection.addEventListener('click', (e) => {
-      // Only close if clicking directly on the section (backdrop), not on child elements
+      // Don't close if we just clicked the close button
+      if (isClosingContact) return;
+      
+      // Only close if clicking directly on the section (backdrop)
       if (e.target === contactSection) {
         closeContactPage();
       }
-    }, true); // Use capture phase to catch clicks early
+    });
   }
 
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
