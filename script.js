@@ -140,13 +140,24 @@
     document.body.style.overflow = 'auto';
   }
 
-  // Direct close button handler - PRIORITY
+  // Close button - navigate to home
   const closeBtn = document.getElementById('contact-close');
   if (closeBtn) {
     closeBtn.addEventListener('click', function (e) {
+      e.preventDefault();
       e.stopPropagation();
+      
       closeContactPage();
-    }, true); // Use capture phase for priority
+      
+      // Scroll to hero section
+      const heroSection = document.getElementById('hero');
+      if (heroSection) {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
+      }
+    });
   }
 
   // Close on Escape key
@@ -163,7 +174,7 @@
   const contactSection = document.querySelector('.contact-section');
   if (contactSection) {
     contactSection.addEventListener('click', (e) => {
-      // Only close if clicking directly on the section (backdrop), not on children
+      // Only close if clicking directly on the section (backdrop)
       if (e.target === contactSection) {
         closeContactPage();
       }
