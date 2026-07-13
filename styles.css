@@ -575,6 +575,15 @@ a {
   opacity: 1;
 }
 
+.contact-section.active ~ .header,
+.header {
+  pointer-events: auto;
+}
+
+.contact-section.active ~ .header {
+  pointer-events: none;
+}
+
 .contact-close {
   position: fixed;
   top: 1.5rem;
@@ -584,7 +593,7 @@ a {
   font-size: 2rem;
   color: #ffffff;
   cursor: pointer;
-  z-index: 1000;
+  z-index: 1001;
   padding: 0;
   width: 40px;
   height: 40px;

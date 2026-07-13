@@ -132,51 +132,60 @@
 // SMOOTH SCROLL LINK HANDLING WITH CONTACT PAGE
 // ==============================================================
 (function () {
+  const contactSection = document.querySelector('.contact-section');
+  const heroSection = document.getElementById('hero');
+  const closeBtn = document.getElementById('contact-close');
+  const header = document.getElementById('header');
+
   function closeContactPage() {
-    const contactSection = document.querySelector('.contact-section');
     if (!contactSection) return;
 
     contactSection.classList.remove('active');
     document.body.style.overflow = 'auto';
+    if (header) header.style.pointerEvents = 'auto';
+  }
+
+  function goHome() {
+    closeContactPage();
+
+    if (heroSection) {
+      heroSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    if (window.location.hash !== '#hero') {
+      history.replaceState(null, '', `${window.location.pathname}${window.location.search}#hero`);
+    }
+  }
+
+  function openContactPage() {
+    if (!contactSection) return;
+    contactSection.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    if (header) header.style.pointerEvents = 'none';
+    window.scrollTo(0, 0);
   }
 
   // Close button - navigate to home
-  const closeBtn = document.getElementById('contact-close');
   if (closeBtn) {
     closeBtn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      
-      closeContactPage();
-      
-      // Scroll to hero section
-      const heroSection = document.getElementById('hero');
-      if (heroSection) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
-      }
+      goHome();
     });
   }
 
   // Close on Escape key
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      const contactSection = document.querySelector('.contact-section');
-      if (contactSection && contactSection.classList.contains('active')) {
-        closeContactPage();
-      }
+    if (event.key === 'Escape' && contactSection?.classList.contains('active')) {
+      goHome();
     }
   });
 
   // Close when clicking the backdrop (outside the contact-box)
-  const contactSection = document.querySelector('.contact-section');
   if (contactSection) {
     contactSection.addEventListener('click', (e) => {
-      // Only close if clicking directly on the section (backdrop)
       if (e.target === contactSection) {
-        closeContactPage();
+        goHome();
       }
     });
   }
@@ -193,28 +202,19 @@
       if (target) {
         event.preventDefault();
 
-        // Special handling for contact page
         if (href === '#contact') {
-          const contactSection = document.querySelector('.contact-section');
-          const isActive = contactSection.classList.contains('active');
+          const isActive = contactSection?.classList.contains('active');
 
           if (isActive) {
-            // Close contact page
-            closeContactPage();
+            goHome();
           } else {
-            // Open contact page
-            contactSection.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            window.scrollTo(0, 0);
+            openContactPage();
           }
         } else {
-          // Close contact page if it's open and navigate to other section
-          const contactSection = document.querySelector('.contact-section');
-          if (contactSection.classList.contains('active')) {
+          if (contactSection?.classList.contains('active')) {
             closeContactPage();
           }
 
-          // Normal scroll for other sections
           setTimeout(() => {
             const headerHeight = document.getElementById('header')?.offsetHeight || 0;
             const targetPosition = target.offsetTop - headerHeight;
